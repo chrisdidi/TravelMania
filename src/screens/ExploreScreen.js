@@ -5,6 +5,8 @@ import styled from 'styled-components';
 const Wrapper = styled.View`
     flex: 1;
     backgroundColor: ${props => props.theme.darkBlueColor};
+    alignItems: center;
+    justifyContent: center;
 `;
 
 const RandomText = styled.Text`

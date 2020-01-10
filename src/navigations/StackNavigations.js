@@ -5,14 +5,14 @@ import AttractionDetail from '../screens/AttractionDetail';
 import ItineraryList from '../screens/ItineraryList';
 import Itinerary from '../screens/Itinerary';
 
-const stackFactory = (initialRoute, customConfig, headerMode) => createStackNavigator({
-    InitialRoute: {
+const stackFactory = createStackNavigator({
+    Explore: {
         screen: ExploreScreen,
         headerMode: 'none',
         navigationOptions: {
             headerShown: false
         }
-    }
+    },
 })
 
 export default createAppContainer(stackFactory)
