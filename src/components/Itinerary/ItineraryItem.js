@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useState, useContext } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
+import { ItineraryContext } from "../../context/ItineraryContext";
 
 export default function ItineraryItem(props) {
+  const { openModalToRemoveTrip } = useContext(ItineraryContext);
   showNearPlaces = location => {
     console.log("test");
   };
 
   return (
     <TouchableOpacity
-      onPress={() => console.log("shaunu")}
+      onPress={() => console.log(props)}
+      onLongPress={() => openModalToRemoveTrip(props.itinerary)}
       style={styles.itemView}
     >
       <View style={styles.textColumn}>
@@ -54,7 +57,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: 150,
     marginTop: 20,
-    marginRight: 5,
     borderRadius: 10,
     borderWidth: 1,
     borderColor: "#fff",
