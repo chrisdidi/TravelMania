@@ -8,6 +8,7 @@ import StackNavigation from "./src/navigations/StackNavigations";
 import Store from './src/context/Store.js';
 import ContextCreator from './src/context/ContextCreator'
 import styles from "./src/styles/Theme";
+import ItineraryContextProvier from "./src/context/ItineraryContext"
 
 export default class App extends Component {
 
