@@ -17,21 +17,27 @@ export default class Store extends Component {
             })
             let filteredArray = []
             let trips = this.state.trips
-            if (this.state.tripToRemove === "") {
+            if (this.state.tripToRemove !== "") {
                 filteredArray = trips.filter((trip => trip !== this.state.tripToRemove))
             }
             else {
-                console.log("patenkam")
-                let filteredAttractions = tripToRemoveAttraction.filter((attraction => attraction != this.state.attractionToRemove))
+                let tripToRemove = this.state.tripToRemoveAttraction
+                let filteredAttractions = tripToRemove.attractions.filter((attraction => attraction != this.state.attractionToRemove))
 
                 for (let i in trips) {
                     if (trips[i].name === this.state.tripToRemoveAttraction.name) {
-                        console.log("radom")
                         trips[i].attractions = filteredAttractions
                     }
                 }
-                filteredArray = trips
 
+                this.setState({
+                    trips: trips,
+                    tripToRemove: "",
+                    attractionToRemove: "",
+                    tripToRemoveAttraction: ""
+                })
+
+                filteredArray = trips
             }
 
             this.setState({
@@ -49,7 +55,6 @@ export default class Store extends Component {
         }
 
         this.openModalToRemoveTrip = (trip, attraction, tripToRemoveAttraction) => {
-            console.log(trip)
             this.setState({
                 showModal: true,
                 tripToRemove: trip,
