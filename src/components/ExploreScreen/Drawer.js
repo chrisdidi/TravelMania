@@ -62,47 +62,43 @@ const TripButton = styled.TouchableOpacity`
     backgroundColor: ${props => props.theme.pinkColor};
 `;
 
-export default ({navigation}) => {
-    return(
+export default ({ navigation }) => {
+    return (
         <Wrapper pointerEvents='box-none'>
-            <Drawer                 
+            <Drawer
                 initialDrawerSize={0.70}
                 refFunc={(c) => {
                 }}
-                
+
                 drawerBg="transparent"
-                renderContainerView={() => <DrawerContainer pointerEvents="box-none"/>}
+                renderContainerView={() => <DrawerContainer pointerEvents="box-none" />}
                 renderDrawerView={() => (
                     <Content>
                         <ContextCreator.Consumer>
                             {context => {
-                                if(context.searchLoading === true){
-                                    return <View style={{width: constants.width, alignItems: 'center', justifyContent: 'center'}}><ActivityIndicator /></View>
-                                }else if(context.currentSuggestions.length > 0){
-                                    return ( <Attractions />)
-                                }else{
-                                    return (<View style={{width: constants.width, alignItems: 'center', justifyContent: 'center'}}><Text>Start by searching something...</Text></View>)
+                                if (context.searchLoading === true) {
+                                    return <View style={{ width: constants.width, alignItems: 'center', justifyContent: 'center' }}><ActivityIndicator /></View>
+                                } else if (context.currentSuggestions.length > 0) {
+                                    return (<Attractions />)
+                                } else {
+                                    return (<View style={{ width: constants.width, alignItems: 'center', justifyContent: 'center' }}><Text>Start by searching something...</Text></View>)
                                 }
                             }}
                         </ContextCreator.Consumer>
                     </Content>)}
                 renderInitDrawerView={() => (<View>
-                    <ContextCreator.Consumer>
-                        {context => {
-                            return (
-                                <TripButton pointerEvents='auto' onPress={() => {
-                                    context.optimizeRoute(0)
-                                }}>
-                                    <MaterialCommunityIcons name='book-multiple-variant' size={32} color={'#fff'}/>
-                                </TripButton>
-                            )
-                        }}
-                    </ContextCreator.Consumer>
+
+                    <TripButton pointerEvents='auto' onPress={() => {
+                        //context.optimizeRoute(0)
+                        navigation.navigate("ItineraryList")
+                    }}>
+                        <MaterialCommunityIcons name='book-multiple-variant' size={32} color={'#fff'} />
+                    </TripButton>
                     <Header>
                         <Title>Attractions nearby</Title>
-                    </Header> 
+                    </Header>
                 </View>)}
-                />
+            />
         </Wrapper>
     )
 }

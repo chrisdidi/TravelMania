@@ -10,14 +10,17 @@ import styles from "../styles/Theme";
 const stackFactory = createStackNavigator({
     Explore: {
         screen: ExploreScreen,
-        headerMode: 'none',
         navigationOptions: {
-            headerShown: false
+            headerShown: false,
+            headerTitle: "TravelMania"
         }
     },
     Details: {
+        navigationOptions: {
+            headerShown: false
+        },
         screen: AttractionDetail,
-      },
+    },
     'Select Itinerary': {
         screen: AddToItinerary
     },
@@ -27,17 +30,17 @@ const stackFactory = createStackNavigator({
     ItineraryList: {
         screen: Itinerary,
         navigationOptions: {
+            headerShown: true,
             headerTitle: 'My Trips',
             headerBackTitle: ' ',
             headerTintColor: styles.pinkColor,
             headerTitleStyle: { color: 'black' }
         },
     }
-    },
+},
     {
         initialRouteName: 'Explore',
         mode: 'modal',
-        headerMode: 'none',
         transparentCard: true
     }
 )

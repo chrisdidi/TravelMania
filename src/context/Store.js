@@ -5,9 +5,9 @@ import * as Location from 'expo-location'
 
 const API_KEY = "AIzaSyCgQNpZtDRvveEeDUkVBOrzy-TcV1QWbMU"
 
-export default class Store extends Component{
+export default class Store extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
 
         this.removeTripFromList = () => {
@@ -32,13 +32,13 @@ export default class Store extends Component{
                 tripToRemove: trip
             })
         }
-    
+
         this.updateCurrentLocation = coordinates => {
             this.setState({
                 currentLocation: coordinates
             })
         }
-    
+
         this.getCurrentLocation = async () => {
             let location = await Location.getCurrentPositionAsync({})
             this.setState({
@@ -51,50 +51,50 @@ export default class Store extends Component{
 
         this.getReviews = placeId => {
             return new Promise(resolve => {
-                const url = "https://maps.googleapis.com/maps/api/place/details/json?place_id="+placeId+"&fields=review&key=" + API_KEY
+                const url = "https://maps.googleapis.com/maps/api/place/details/json?place_id=" + placeId + "&fields=review&key=" + API_KEY
                 fetch(url)
-                .then((response) => response.json())
-                .then(async (JsonResponse) => {
-                    resolve(JsonResponse.result.reviews)
-                })
+                    .then((response) => response.json())
+                    .then(async (JsonResponse) => {
+                        resolve(JsonResponse.result.reviews)
+                    })
             })
         }
 
         this.searchNearbyAttractions = coordinates => {
             return new Promise(resolve => {
-            const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?' + 'location=' + coordinates.lat + ',' + coordinates.lng + '&radius=3000&type=tourise_attraction&key=' + API_KEY;
-            fetch(url)
-                .then((response) => response.json())
-                .then(async (JsonResponse) => {
-                    let results = JsonResponse.results
-                    results.shift()
-                    let currentSuggestions = []
-                    for(let i = 0; i < 10; i++){
-                        let reviews = await this.getReviews(results[i].place_id)
-                        let img = ""
-                        if(results[i].photos === undefined){
-                            img = "https://visualsound.com/wp-content/uploads/2019/05/unavailable-image.jpg"
-                        }else{
-                            img = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=" + results[i].photos[0].photo_reference + "&key=" + API_KEY
+                const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?' + 'location=' + coordinates.lat + ',' + coordinates.lng + '&radius=3000&type=tourise_attraction&key=' + API_KEY;
+                fetch(url)
+                    .then((response) => response.json())
+                    .then(async (JsonResponse) => {
+                        let results = JsonResponse.results
+                        results.shift()
+                        let currentSuggestions = []
+                        for (let i = 0; i < 10; i++) {
+                            let reviews = await this.getReviews(results[i].place_id)
+                            let img = ""
+                            if (results[i].photos === undefined) {
+                                img = "https://visualsound.com/wp-content/uploads/2019/05/unavailable-image.jpg"
+                            } else {
+                                img = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=" + results[i].photos[0].photo_reference + "&key=" + API_KEY
+                            }
+                            let attraction = {
+                                coordinates: results[i].geometry.location,
+                                placeId: results[i].place_id,
+                                name: results[i].name,
+                                img: img,
+                                reviews: reviews,
+                            }
+                            currentSuggestions = [...currentSuggestions, attraction]
                         }
-                        let attraction = {
-                            coordinates: results[i].geometry.location,
-                            placeId: results[i].place_id,
-                            name: results[i].name,
-                            img : img,
-                            reviews: reviews,
-                        }
-                        currentSuggestions=[ ...currentSuggestions, attraction]
-                    }
-                    this.setState({
-                        currentSuggestions: currentSuggestions,
-                        activePlaceId: currentSuggestions[0].placeId
+                        this.setState({
+                            currentSuggestions: currentSuggestions,
+                            activePlaceId: currentSuggestions[0].placeId
+                        })
+                        resolve(true)
                     })
-                    resolve(true)
-                })
-                .catch((error) => {
-                    console.log(error)
-                });
+                    .catch((error) => {
+                        console.log(error)
+                    });
             })
         }
 
@@ -102,7 +102,7 @@ export default class Store extends Component{
             this.setState({
                 searchLoading: true
             })
-            let url = "https://maps.googleapis.com/maps/api/geocode/json?place_id=" + placeId+ "&key=" + API_KEY
+            let url = "https://maps.googleapis.com/maps/api/geocode/json?place_id=" + placeId + "&key=" + API_KEY
             fetch(url)
                 .then((response) => response.json())
                 .then(async (JsonResponse) => {
@@ -148,11 +148,11 @@ export default class Store extends Component{
             let trips = this.state.trips
             let attractionPlaceId = placeId
             let newIndex = 0;
-            for(let i = 0; i < trips[tripIndex].attractions.length; i++){
-                if(trips[tripIndex].attractions[i].placeId === attractionPlaceId){
+            for (let i = 0; i < trips[tripIndex].attractions.length; i++) {
+                if (trips[tripIndex].attractions[i].placeId === attractionPlaceId) {
                     break
                 }
-                newIndex = newIndex+ 1
+                newIndex = newIndex + 1
             }
             trips[tripIndex].attractions.splice(newIndex, 1)
             this.setState({
@@ -164,7 +164,8 @@ export default class Store extends Component{
             let newTrip = {
                 name: name,
                 description: description,
-                attractions: []
+                attractions: [],
+                image: ""
             }
             this.setState({
                 trips: [...this.state.trips, newTrip]
@@ -172,37 +173,37 @@ export default class Store extends Component{
         }
 
         this.openGoogleMap = (name, placeId) => {
-            Linking.openURL('https://www.google.com/maps/search/?api=1&query='+ name.replace(" ", '%20') +'&query_place_id=' + placeId)
+            Linking.openURL('https://www.google.com/maps/search/?api=1&query=' + name.replace(" ", '%20') + '&query_place_id=' + placeId)
         }
 
         this.optimizeRoute = (tripIndex, origin, destination) => {
             let trips = this.state.trips
             let waypoints = ""
 
-            for(let i = 0; i < trips[tripIndex].attractions.length; i++){
+            for (let i = 0; i < trips[tripIndex].attractions.length; i++) {
                 waypoints = waypoints + "%7C" + trips[tripIndex].attractions[i].coordinates.lat + '%2C' + trips[tripIndex].attractions[i].coordinates.lng
             }
-            let url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + origin  + '&destination=' + destination + '&waypoints=optimize:true' + waypoints + '&key=' + API_KEY
+            let url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + origin + '&destination=' + destination + '&waypoints=optimize:true' + waypoints + '&key=' + API_KEY
             fetch(url)
-            .then(response => response.json())
-            .then(JSONResponse => {
-                let route = JSONResponse.routes[0].waypoint_order
-                let newOrder = []
-                for(let i = 0; i < route.length; i ++){
-                    newOrder = [ ...newOrder, trips[tripIndex].attractions[route[i]]]
-                }
-                trips[tripIndex].attractions = newOrder
-            })
+                .then(response => response.json())
+                .then(JSONResponse => {
+                    let route = JSONResponse.routes[0].waypoint_order
+                    let newOrder = []
+                    for (let i = 0; i < route.length; i++) {
+                        newOrder = [...newOrder, trips[tripIndex].attractions[route[i]]]
+                    }
+                    trips[tripIndex].attractions = newOrder
+                })
         }
 
-        this.state={
+        this.state = {
             currentLocation: {
                 lat: 0,
                 lng: 0
             },
             searchLoading: false,
             currentSuggestions: [],
-            trips:[],
+            trips: [],
             showModal: false,
             tripToRemove: "",
             removeTripFromList: this.removeTripFromList,
@@ -223,11 +224,11 @@ export default class Store extends Component{
         }
     }
 
-    render(){
-    return (
-        <ContextCreator.Provider value={this.state}>
-            {this.props.theApp}
-        </ContextCreator.Provider>
-    );
+    render() {
+        return (
+            <ContextCreator.Provider value={this.state}>
+                {this.props.theApp}
+            </ContextCreator.Provider>
+        );
     }
 }

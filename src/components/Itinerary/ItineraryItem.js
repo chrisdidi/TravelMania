@@ -1,50 +1,53 @@
-import React, { useState, useContext } from "react";
+import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
-import { ItineraryContext } from "../../context/ItineraryContext";
+import ContextCreator from "../../context/ContextCreator"
 
 export default function ItineraryItem(props) {
-  const { openModalToRemoveTrip } = useContext(ItineraryContext);
-  showNearPlaces = location => {
-    console.log("test");
-  };
+
 
   return (
-    <TouchableOpacity
-      onPress={() => console.log(props)}
-      onLongPress={() => openModalToRemoveTrip(props.itinerary)}
-      style={styles.itemView}
-    >
-      <View style={styles.textColumn}>
-        <Text style={{ fontWeight: "bold", fontSize: 18 }}>
-          {props.itinerary.tripName}
-        </Text>
-        <Text style={{ color: "#878787", marginTop: 5 }}>
-          Country: {props.itinerary.country}
-        </Text>
-        <Text
-          style={{
-            marginTop: 25,
-            color: "#878787",
-            fontWeight: props.itinerary.attractions === 8 ? "bold" : "normal"
-          }}
-        >
-          Attractions: {props.itinerary.attractions}
-        </Text>
-      </View>
-      <View style={styles.imgColumn}>
-        <Image
-          style={{
-            width: "100%",
-            height: "100%",
-            borderTopRightRadius: 10,
-            borderBottomRightRadius: 10
-          }}
-          source={{
-            uri: props.itinerary.image
-          }}
-        ></Image>
-      </View>
-    </TouchableOpacity>
+    <ContextCreator.Consumer>
+      {context => {
+        return (
+          <TouchableOpacity
+            onPress={() => console.log(props)}
+            onLongPress={() => context.openModalToRemoveTrip(props.itinerary)}
+            style={styles.itemView}
+          >
+            <View style={styles.textColumn}>
+              <Text style={{ fontWeight: "bold", fontSize: 18 }}>
+                {props.itinerary.name}
+              </Text>
+              <Text
+                style={{
+                  marginTop: 25,
+                  color: "#878787",
+                  fontWeight: props.itinerary.attractions === 8 ? "bold" : "normal"
+                }}
+              >
+                Attractions: {props.itinerary.attractions.length}
+              </Text>
+            </View>
+            {props.itinerary.image !== "" && <Image
+              style={{
+                width: "100%",
+                height: "100%",
+                borderTopRightRadius: 10,
+                borderBottomRightRadius: 10
+              }}
+              source={{
+                uri: props.itinerary.image
+              }}
+            />}
+
+            {props.itinerary.image === "" && <Text> Photo still not set sorry</Text>}
+            <View style={styles.imgColumn}>
+
+            </View>
+          </TouchableOpacity>
+        )
+      }}
+    </ContextCreator.Consumer>
   );
 }
 

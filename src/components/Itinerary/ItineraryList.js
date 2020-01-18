@@ -1,6 +1,7 @@
-import React, { useContext } from "react";
+import React from "react";
 import { StyleSheet, FlatList, Text, View } from "react-native";
-import { ItineraryContext } from "../../context/ItineraryContext";
+import ContextCreator from "../../context/ContextCreator";
+
 
 
 
@@ -8,21 +9,31 @@ import ItineraryItem from "./ItineraryItem";
 
 export default function ItineraryList(props) {
 
-  const { trips } = useContext(ItineraryContext);
-  data = trips.map((elem, index) => ({ id: index, itinerary: elem }));
 
   return (
-    <FlatList
-      contentContainerStyle={{
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-      style={styles.scrollView}
-      data={data}
+    <ContextCreator.Consumer>
+      {context => {
+        console.log(context.trips)
+        const data = context.trips.map((elem, index) => ({ id: index, itinerary: elem }))
+        console.log(data)
+        return (
+          <>
+            <FlatList
+              contentContainerStyle={{
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              style={styles.scrollView}
+              data={data}
 
-      renderItem={({ item }) => <ItineraryItem itinerary={item.itinerary} />}
-      keyExtractor={item => item.id + item.itinerary.tripName}
-    />
+              renderItem={({ item }) => <ItineraryItem itinerary={item.itinerary} />}
+              keyExtractor={item => item.id + item.itinerary.tripName}
+            />
+          </>
+        )
+      }}
+    </ContextCreator.Consumer>
+
   );
 }
 
