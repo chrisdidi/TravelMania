@@ -6,6 +6,7 @@ import Itinerary from '../screens/Itinerary';
 import AddToItinerary from '../screens/AddToItinerary';
 import ConfirmAddToItinerary from '../screens/ConfirmAddToItinerary';
 import AttractionsList from '../screens/AttractionsScreen'
+import OptimisationScreen from '../screens/OptimisationScreen'
 import styles from "../styles/Theme";
 
 const stackFactory = createStackNavigator({
@@ -49,6 +50,16 @@ const stackFactory = createStackNavigator({
         navigationOptions: {
             headerShown: true,
             headerTitle: 'Attractions',
+            headerBackTitle: ' ',
+            headerTintColor: styles.pinkColor,
+            headerTitleStyle: { color: 'black' }
+        },
+    },
+    OptimisationScreen: {
+        screen: OptimisationScreen,
+        navigationOptions: {
+            headerShown: true,
+            headerTitle: 'Almost done',
             headerBackTitle: ' ',
             headerTintColor: styles.pinkColor,
             headerTitleStyle: { color: 'black' }
