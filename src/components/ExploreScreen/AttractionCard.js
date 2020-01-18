@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { View, Text, Image } from 'react-native'
 import ContextCreator from '../../context/ContextCreator';
 import styled from 'styled-components';
 import constants from '../../constants';
@@ -44,7 +43,8 @@ export default class AttractionCard extends Component {
                             context.navigation.navigate({
                                 routeName: 'Details', params: {
                                     attraction: context.currentSuggestions[this.props.index],
-                                    isSuggestion: true
+                                    isSuggestion: true,
+                                    index: this.props.index
                                 }, key: 'MAIN_ROUTE_EXPLORE'
                             })
                         }}>
