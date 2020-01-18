@@ -10,7 +10,7 @@ export default function ItineraryItem(props) {
       {context => {
         return (
           <TouchableOpacity
-            onPress={() => console.log(props)}
+            onPress={() => props.navigation.navigate("AttractionsList", { attractions: props.itinerary.attractions, tripName: props.itinerary.name })}
             onLongPress={() => context.openModalToRemoveTrip(props.itinerary)}
             style={styles.itemView}
           >
@@ -28,21 +28,21 @@ export default function ItineraryItem(props) {
                 Attractions: {props.itinerary.attractions.length}
               </Text>
             </View>
-            {props.itinerary.image !== "" && <Image
-              style={{
-                width: "100%",
-                height: "100%",
-                borderTopRightRadius: 10,
-                borderBottomRightRadius: 10
-              }}
-              source={{
-                uri: props.itinerary.image
-              }}
-            />}
 
-            {props.itinerary.image === "" && <Text> Photo still not set sorry</Text>}
             <View style={styles.imgColumn}>
+              {props.itinerary.image !== "" && <Image
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  borderTopRightRadius: 10,
+                  borderBottomRightRadius: 10
+                }}
+                source={{
+                  uri: props.itinerary.image
+                }}
+              />}
 
+              {props.itinerary.image === "" && <Text> Photo still not set sorry</Text>}
             </View>
           </TouchableOpacity>
         )

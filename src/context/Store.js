@@ -131,6 +131,9 @@ export default class Store extends Component {
 
         this.addToItinerary = (attractionIndex, tripIndex) => {
             let trips = this.state.trips
+            if (trips[tripIndex].attractions.length === 0) {
+                trips[tripIndex].image = this.state.currentSuggestions[attractionIndex].img
+            }
             trips[tripIndex].attractions = [...this.state.trips[tripIndex].attractions, this.state.currentSuggestions[attractionIndex]]
             this.setState({
                 trips: trips

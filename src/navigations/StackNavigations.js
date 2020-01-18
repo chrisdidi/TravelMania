@@ -5,6 +5,7 @@ import AttractionDetail from '../screens/AttractionDetail';
 import Itinerary from '../screens/Itinerary';
 import AddToItinerary from '../screens/AddToItinerary';
 import ConfirmAddToItinerary from '../screens/ConfirmAddToItinerary';
+import AttractionsList from '../screens/AttractionsScreen'
 import styles from "../styles/Theme";
 
 const stackFactory = createStackNavigator({
@@ -22,16 +23,32 @@ const stackFactory = createStackNavigator({
         screen: AttractionDetail,
     },
     'Select Itinerary': {
-        screen: AddToItinerary
+        screen: AddToItinerary,
+        navigationOptions: {
+            headerShown: false
+        },
     },
     'Confirm Itinerary': {
-        screen: ConfirmAddToItinerary
+        screen: ConfirmAddToItinerary,
+        navigationOptions: {
+            headerShown: false
+        },
     },
     ItineraryList: {
         screen: Itinerary,
         navigationOptions: {
             headerShown: true,
             headerTitle: 'My Trips',
+            headerBackTitle: ' ',
+            headerTintColor: styles.pinkColor,
+            headerTitleStyle: { color: 'black' }
+        },
+    },
+    AttractionsList: {
+        screen: AttractionsList,
+        navigationOptions: {
+            headerShown: true,
+            headerTitle: 'Attractions',
             headerBackTitle: ' ',
             headerTintColor: styles.pinkColor,
             headerTitleStyle: { color: 'black' }

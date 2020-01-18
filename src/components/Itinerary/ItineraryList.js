@@ -1,21 +1,14 @@
 import React from "react";
 import { StyleSheet, FlatList, Text, View } from "react-native";
 import ContextCreator from "../../context/ContextCreator";
-
-
-
-
 import ItineraryItem from "./ItineraryItem";
 
 export default function ItineraryList(props) {
 
-
   return (
     <ContextCreator.Consumer>
       {context => {
-        console.log(context.trips)
         const data = context.trips.map((elem, index) => ({ id: index, itinerary: elem }))
-        console.log(data)
         return (
           <>
             <FlatList
@@ -26,8 +19,8 @@ export default function ItineraryList(props) {
               style={styles.scrollView}
               data={data}
 
-              renderItem={({ item }) => <ItineraryItem itinerary={item.itinerary} />}
-              keyExtractor={item => item.id + item.itinerary.tripName}
+              renderItem={({ item }) => <ItineraryItem itinerary={item.itinerary} navigation={props.navigation} />}
+              keyExtractor={item => item.id + item.itinerary.name + item.itinerary.image}
             />
           </>
         )
