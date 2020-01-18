@@ -2,6 +2,7 @@ import React, { Component, createContext, useState } from "react";
 import { Linking } from 'react-native'
 import ContextCreator from './ContextCreator'
 import * as Location from 'expo-location'
+import { AsyncStorage } from "react-native";
 
 const API_KEY = "AIzaSyCgQNpZtDRvveEeDUkVBOrzy-TcV1QWbMU"
 
@@ -14,9 +15,30 @@ export default class Store extends Component {
             this.setState({
                 showModal: false
             })
-            let filteredArray = trips.filter((trip => trip !== tripToRemove))
+            let filteredArray = []
+            let trips = this.state.trips
+            if (this.state.tripToRemove === "") {
+                filteredArray = trips.filter((trip => trip !== this.state.tripToRemove))
+            }
+            else {
+                console.log("patenkam")
+                let filteredAttractions = tripToRemoveAttraction.filter((attraction => attraction != this.state.attractionToRemove))
+
+                for (let i in trips) {
+                    if (trips[i].name === this.state.tripToRemoveAttraction.name) {
+                        console.log("radom")
+                        trips[i].attractions = filteredAttractions
+                    }
+                }
+                filteredArray = trips
+
+            }
+
             this.setState({
-                trips: filteredArray
+                trips: filteredArray,
+                tripToRemove: "",
+                attractionToRemove: "",
+                tripToRemoveAttraction: ""
             })
         }
 
@@ -26,10 +48,13 @@ export default class Store extends Component {
             })
         }
 
-        this.openModalToRemoveTrip = (trip) => {
+        this.openModalToRemoveTrip = (trip, attraction, tripToRemoveAttraction) => {
+            console.log(trip)
             this.setState({
                 showModal: true,
-                tripToRemove: trip
+                tripToRemove: trip,
+                attractionToRemove: attraction,
+                tripToRemoveAttraction: tripToRemoveAttraction
             })
         }
 
@@ -129,7 +154,7 @@ export default class Store extends Component {
             })
         }
 
-        this.addToItinerary = (attractionIndex, tripIndex) => {
+        this.addToItinerary = async (attractionIndex, tripIndex) => {
             let trips = this.state.trips
             if (trips[tripIndex].attractions.length === 0) {
                 trips[tripIndex].image = this.state.currentSuggestions[attractionIndex].img
@@ -138,6 +163,13 @@ export default class Store extends Component {
             this.setState({
                 trips: trips
             })
+
+            try {
+                await AsyncStorage.setItem(
+                    "@SavedTrips",
+                    JSON.stringify(trips));
+            }
+            catch (e) { }
         }
 
         this.checkAttractionExistence = (attractionIndex, tripIndex) => {
@@ -163,13 +195,20 @@ export default class Store extends Component {
             })
         }
 
-        this.createNewItinerary = (name, description) => {
+        this.createNewItinerary = async (name, description) => {
             let newTrip = {
                 name: name,
                 description: description,
                 attractions: [],
                 image: ""
             }
+
+            try {
+                await AsyncStorage.setItem(
+                    "@SavedTrips",
+                    JSON.stringify([...this.state.trips, newTrip]));
+            }
+            catch (e) { }
             this.setState({
                 trips: [...this.state.trips, newTrip]
             })
@@ -209,6 +248,8 @@ export default class Store extends Component {
             trips: [],
             showModal: false,
             tripToRemove: "",
+            attractionToRemove: "",
+            tripToRemoveAttraction: "",
             removeTripFromList: this.removeTripFromList,
             setModalState: this.setModalState,
             openModalToRemoveTrip: this.openModalToRemoveTrip,
@@ -224,6 +265,20 @@ export default class Store extends Component {
             removeAttractionFromItinerary: this.removeAttractionFromItinerary,
             openGoogleMap: this.openGoogleMap,
             optimizeRoute: this.optimizeRoute
+        }
+    }
+
+    async componentDidMount() {
+        try {
+            const savedTrips = await AsyncStorage.getItem("@SavedTrips");
+            if (savedTrips !== null && savedTrips.length != 0) {
+                let parsedTrips = JSON.parse(savedTrips);
+                this.setState({
+                    trips: parsedTrips
+                })
+            }
+        } catch (error) {
+            // Error retrieving data
         }
     }
 

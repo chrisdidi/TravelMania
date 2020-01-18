@@ -10,8 +10,9 @@ export default function ItineraryItem(props) {
       {context => {
         return (
           <TouchableOpacity
-            onPress={() => props.navigation.navigate("AttractionsList", { attractions: props.itinerary.attractions, tripName: props.itinerary.name })}
-            onLongPress={() => context.openModalToRemoveTrip(props.itinerary)}
+            onPress={() =>
+              props.navigation.navigate("AttractionsList", { attractions: props.itinerary.attractions, trip: props.itinerary })}
+            onLongPress={() => context.openModalToRemoveTrip(props.itinerary, "", "")}
             style={styles.itemView}
           >
             <View style={styles.textColumn}>

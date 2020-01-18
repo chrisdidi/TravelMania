@@ -15,7 +15,7 @@ export default function AttractionsList(props) {
             style={styles.scrollView}
             data={data}
 
-            renderItem={({ item }) => <AttractionsItem attraction={item.attraction} />}
+            renderItem={({ item }) => <AttractionsItem attraction={item.attraction} trip={props.trip} />}
             keyExtractor={item => item.id + item.attraction.name + item.attraction.img}
         />
 

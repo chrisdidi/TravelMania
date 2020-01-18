@@ -25,7 +25,7 @@ export default function TripModal(props) {
                             }}
                             modalTitle={
                                 <ModalTitle
-                                    title="Do you really want to delete the trip?"
+                                    title="Do you really want to remove it from the list?"
                                     align="left"
                                 />
                             }
