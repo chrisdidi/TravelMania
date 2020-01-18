@@ -44,7 +44,12 @@ export default function AttractionsItem(props) {
             {context => {
                 return (
                     <TouchableOpacity
-                        onPress={() => console.log(props.attraction)}
+                        onPress={() => context.navigation.navigate({
+                            routeName: 'Details', params: {
+                                attraction: props.attraction,
+                                isSuggestion: false
+                            }, key: 'MAIN_ROUTE_EXPLORE'
+                        })}
                         onLongPress={() => context.openModalToRemoveTrip("", props.attraction, props.trip)}
                         style={styles.itemView}
                     >

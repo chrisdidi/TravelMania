@@ -66,50 +66,47 @@ const NoReview = styled.View`
 `;
 
 
-export default class AttractionDetail extends Component{
+export default class AttractionDetail extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props)
-        this.state={
+        this.state = {
 
         }
     }
 
-    render(){
-        return(
-            <ContextCreator.Consumer>
-                {context => {
-                    return (
-                        <Wrapper>
-                            <BackgroundImage source={{uri: context.currentSuggestions[this.props.navigation.getParam('index')].img}}/>
-                            <Container>
-                                <Title>{context.currentSuggestions[this.props.navigation.getParam('index')].name}</Title>
-                                <ReviewCount>{context.currentSuggestions[this.props.navigation.getParam('index')].reviews ? context.currentSuggestions[this.props.navigation.getParam('index')].reviews.length : 0} reviews</ReviewCount>
-                                    {context.currentSuggestions[this.props.navigation.getParam('index')].reviews ? <ContentWrapper>
-                                        {context.currentSuggestions[this.props.navigation.getParam('index')].reviews.map((review, index) => {
-                                            return (<Review author={review.author_name} authorProfilePic={review.profile_photo_url} rating={review.rating} text={review.text} key={index}/>)
-                                        })}
-                                    </ContentWrapper>:
-                                    <NoReview>
-                                        <Text>No reviews yet.</Text>
-                                    </NoReview>
-                                    }
-                                <ButtonsWrapper>
-                                    <PrimaryButton text="ADD TO ITINERARY" buttonWidth={constants.width - 40} onPress={() => {
-                                        let index = this.props.navigation.getParam('index')
-                                        this.props.navigation.navigate('Select Itinerary', {
-                                            index: index
-                                        })
-                                    }}/>
-                                    <SecondaryButton text="VISIT NOW" buttonWidth={constants.width - 40} onPress={() => {
-                                        context.openGoogleMap(context.currentSuggestions[this.props.navigation.getParam('index')].name, context.currentSuggestions[this.props.navigation.getParam('index')].placeId)
-                                    }}/>
-                                </ButtonsWrapper>
-                            </Container>
-                        </Wrapper>
-                    )
-                }}
-            </ContextCreator.Consumer>
+    render() {
+
+        return (
+            <Wrapper>
+                <BackgroundImage source={{ uri: this.props.navigation.getParam('attraction').img }} />
+                <Container>
+                    <Title>{this.props.navigation.getParam('attraction').name}</Title>
+                    <ReviewCount>{this.props.navigation.getParam('attraction').reviews ? this.props.navigation.getParam('attraction').reviews.length : 0} reviews</ReviewCount>
+                    {this.props.navigation.getParam('attraction').reviews ? <ContentWrapper>
+                        {this.props.navigation.getParam('attraction').reviews.map((review, index) => {
+                            return (<Review author={review.author_name} authorProfilePic={review.profile_photo_url} rating={review.rating} text={review.text} key={index} />)
+                        })}
+                    </ContentWrapper> :
+                        <NoReview>
+                            <Text>No reviews yet.</Text>
+                        </NoReview>
+                    }
+                    <ButtonsWrapper style={{ height: this.props.navigation.getParam('isSuggestion') ? 145 : 90 }}>
+                        {this.props.navigation.getParam('isSuggestion') && <PrimaryButton text="ADD TO ITINERARY" buttonWidth={constants.width - 40} onPress={() => {
+                            let index = this.props.navigation.getParam('index')
+                            this.props.navigation.navigate('Select Itinerary', {
+                                index: index
+                            })
+                        }} />}
+
+                        <SecondaryButton text="VISIT NOW" buttonWidth={constants.width - 40} onPress={() => {
+                            context.openGoogleMap(this.props.navigation.getParam('attraction').name, this.props.navigation.getParam('attraction').placeId)
+                        }} />
+                    </ButtonsWrapper>
+                </Container>
+            </Wrapper>
+
         )
     }
 }

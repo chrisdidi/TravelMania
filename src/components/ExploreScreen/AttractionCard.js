@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { View, Text, Image } from 'react-native'
 import ContextCreator from '../../context/ContextCreator';
@@ -26,34 +26,37 @@ const Name = styled.Text`
     fontWeight: bold;
 `;
 
-export default class AttractionCard extends Component{
-    
-    constructor(props){
+export default class AttractionCard extends Component {
+
+    constructor(props) {
         super(props)
-        this.state={
+        this.state = {
 
         }
     }
 
-    render(){
-    return (
-        <ContextCreator.Consumer>
-            {context => {
-                return (
-                    <TouchableOpacity onPress={() => {
-                        context.navigation.navigate({routeName: 'Details', params: {
-                            index: this.props.index
-                        }, key: 'MAIN_ROUTE_EXPLORE'})
-                    }}>
-                        <Wrapper>
-                            <Img source={{uri: this.props.img}}/>
-                            <Name>{this.props.name}</Name>
-                        </Wrapper>
-                    </TouchableOpacity>
-                )
-            }}
-        </ContextCreator.Consumer>
-    )
+    render() {
+        return (
+            <ContextCreator.Consumer>
+                {context => {
+                    return (
+                        <TouchableOpacity onPress={() => {
+                            context.navigation.navigate({
+                                routeName: 'Details', params: {
+                                    attraction: context.currentSuggestions[this.props.index],
+                                    isSuggestion: true
+                                }, key: 'MAIN_ROUTE_EXPLORE'
+                            })
+                        }}>
+                            <Wrapper>
+                                <Img source={{ uri: this.props.img }} />
+                                <Name>{this.props.name}</Name>
+                            </Wrapper>
+                        </TouchableOpacity>
+                    )
+                }}
+            </ContextCreator.Consumer>
+        )
     }
 }
 

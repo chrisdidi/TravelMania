@@ -11,31 +11,22 @@ export default class Store extends Component {
     constructor(props) {
         super(props);
 
-        this.removeTripFromList = () => {
-            this.setState({
-                showModal: false
-            })
+        this.removeTripFromList = async () => {
+
             let filteredArray = []
             let trips = this.state.trips
+
             if (this.state.tripToRemove !== "") {
                 filteredArray = trips.filter((trip => trip !== this.state.tripToRemove))
             }
             else {
-                let tripToRemove = this.state.tripToRemoveAttraction
-                let filteredAttractions = tripToRemove.attractions.filter((attraction => attraction != this.state.attractionToRemove))
+                let filteredAttractions = this.state.tripToRemoveAttraction.attractions.filter((attraction => attraction !== this.state.attractionToRemove))
 
                 for (let i in trips) {
                     if (trips[i].name === this.state.tripToRemoveAttraction.name) {
                         trips[i].attractions = filteredAttractions
                     }
                 }
-
-                this.setState({
-                    trips: trips,
-                    tripToRemove: "",
-                    attractionToRemove: "",
-                    tripToRemoveAttraction: ""
-                })
 
                 filteredArray = trips
             }
@@ -44,8 +35,16 @@ export default class Store extends Component {
                 trips: filteredArray,
                 tripToRemove: "",
                 attractionToRemove: "",
-                tripToRemoveAttraction: ""
+                tripToRemoveAttraction: "",
+                showModal: false
             })
+
+            try {
+                await AsyncStorage.setItem(
+                    "@SavedTrips",
+                    JSON.stringify(filteredArray));
+            }
+            catch (e) { }
         }
 
         this.setModalState = state => {
