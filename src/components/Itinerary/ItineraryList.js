@@ -9,6 +9,7 @@ export default function ItineraryList(props) {
     <ContextCreator.Consumer>
       {context => {
         const data = context.trips.map((elem, index) => ({ id: index, itinerary: elem }))
+
         return (
           <>
             <FlatList
@@ -19,7 +20,7 @@ export default function ItineraryList(props) {
               style={styles.scrollView}
               data={data}
 
-              renderItem={({ item }) => <ItineraryItem itinerary={item.itinerary} navigation={props.navigation} />}
+              renderItem={({ item }) => <ItineraryItem index={item.id} itinerary={item.itinerary} navigation={props.navigation} />}
               keyExtractor={item => item.id + item.itinerary.name + item.itinerary.image}
             />
           </>

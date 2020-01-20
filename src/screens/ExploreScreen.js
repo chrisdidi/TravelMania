@@ -109,7 +109,9 @@ export default class ExploreScreen extends Component {
                                         autoFocus={false}
                                         fetchDetails={true}
                                         onPress={async (data, details = null) => { // 'details' is provided when fetchDetails = true
-                                            context.getLatLngFromGoogle(data.place_id)
+                                            let latLng = await context.getLatLngFromGoogle(data.place_id)
+                                            context.updateCurrentLocation(latLng)
+                                            await context.searchNearbyAttractions(latLng)
                                             this.setState({
                                                 showList: false
                                             })

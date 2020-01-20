@@ -91,6 +91,9 @@ export default class Store extends Component {
 
         this.searchNearbyAttractions = coordinates => {
             return new Promise(resolve => {
+                this.setState({
+                    searchLoading: true
+                })
                 const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?' + 'location=' + coordinates.lat + ',' + coordinates.lng + '&radius=3000&type=tourise_attraction&key=' + API_KEY;
                 fetch(url)
                     .then((response) => response.json())
@@ -119,6 +122,9 @@ export default class Store extends Component {
                             currentSuggestions: currentSuggestions,
                             activePlaceId: currentSuggestions[0].placeId
                         })
+                        this.setState({
+                            searchLoading: false
+                        })
                         resolve(true)
                     })
                     .catch((error) => {
@@ -128,22 +134,23 @@ export default class Store extends Component {
         }
 
         this.getLatLngFromGoogle = placeId => {
-            this.setState({
-                searchLoading: true
-            })
-            let url = "https://maps.googleapis.com/maps/api/geocode/json?place_id=" + placeId + "&key=" + API_KEY
-            fetch(url)
-                .then((response) => response.json())
-                .then(async (JsonResponse) => {
-                    this.updateCurrentLocation(JsonResponse.results[0].geometry.location)
-                    await this.searchNearbyAttractions(JsonResponse.results[0].geometry.location)
-                    this.setState({
-                        searchLoading: false
-                    })
+            return new Promise(resolve => {
+                this.setState({
+                    searchLoading: true
                 })
-                .catch((error) => {
-                    alert("An error occurred, please try again.")
-                });
+                let url = "https://maps.googleapis.com/maps/api/geocode/json?place_id=" + placeId + "&key=" + API_KEY
+                fetch(url)
+                    .then((response) => response.json())
+                    .then(async (JsonResponse) => {
+                        this.setState({
+                            searchLoading: false
+                        })
+                        resolve(JsonResponse.results[0].geometry.location)
+                    })
+                    .catch((error) => {
+                        alert("An error occurred, please try again.")
+                    });
+            })
         }
 
         this.updateActivePlaceId = placeId => {
@@ -229,7 +236,7 @@ export default class Store extends Component {
             for (let i = 0; i < trips[tripIndex].attractions.length; i++) {
                 waypoints = waypoints + "%7C" + trips[tripIndex].attractions[i].coordinates.lat + '%2C' + trips[tripIndex].attractions[i].coordinates.lng
             }
-            let url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + origin + '&destination=' + destination + '&waypoints=optimize:true' + waypoints + '&key=' + API_KEY
+            let url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + origin.lat + ',' + origin.lng + '&destination=' + destination.lat + ',' + destination.lng + '&waypoints=optimize:true' + waypoints + '&key=' + API_KEY
             fetch(url)
                 .then(response => response.json())
                 .then(JSONResponse => {
@@ -239,6 +246,10 @@ export default class Store extends Component {
                         newOrder = [...newOrder, trips[tripIndex].attractions[route[i]]]
                     }
                     trips[tripIndex].attractions = newOrder
+                    this.setState({
+                        trips: trips
+                    })
+                    console.log(newOrder)
                 })
         }
 

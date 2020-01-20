@@ -4,14 +4,13 @@ import ContextCreator from "../../context/ContextCreator"
 
 export default function ItineraryItem(props) {
 
-
   return (
     <ContextCreator.Consumer>
       {context => {
         return (
           <TouchableOpacity
             onPress={() =>
-              props.navigation.navigate("AttractionsList", { attractions: props.itinerary.attractions, trip: props.itinerary })}
+              props.navigation.navigate("AttractionsList", { index: props.index, attractions: props.itinerary.attractions, trip: props.itinerary })}
             onLongPress={() => context.openModalToRemoveTrip(props.itinerary, "", "")}
             style={styles.itemView}
           >

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useContext } from 'react';
 import { View, Image, Text, ScrollView, Linking } from 'react-native';
 import ContextCreator from '../context/ContextCreator'
 import constants from '../constants'
@@ -66,47 +66,38 @@ const NoReview = styled.View`
 `;
 
 
-export default class AttractionDetail extends Component {
+export default (props) => {
+    const { openGoogleMap } = useContext(ContextCreator)
 
-    constructor(props) {
-        super(props)
-        this.state = {
+    return (
+        <Wrapper>
+            <BackgroundImage source={{ uri: props.navigation.getParam('attraction').img }} />
+            <Container>
+                <Title>{props.navigation.getParam('attraction').name}</Title>
+                <ReviewCount>{props.navigation.getParam('attraction').reviews ? props.navigation.getParam('attraction').reviews.length : 0} reviews</ReviewCount>
+                {props.navigation.getParam('attraction').reviews ? <ContentWrapper>
+                    {props.navigation.getParam('attraction').reviews.map((review, index) => {
+                        return (<Review author={review.author_name} authorProfilePic={review.profile_photo_url} rating={review.rating} text={review.text} key={index} />)
+                    })}
+                </ContentWrapper> :
+                    <NoReview>
+                        <Text>No reviews yet.</Text>
+                    </NoReview>
+                }
+                <ButtonsWrapper style={{ height: props.navigation.getParam('isSuggestion') ? 145 : 90 }}>
+                    {props.navigation.getParam('isSuggestion') && <PrimaryButton text="ADD TO ITINERARY" buttonWidth={constants.width - 40} onPress={() => {
+                        let index = props.navigation.getParam('index')
+                        props.navigation.navigate('Select Itinerary', {
+                            index: index
+                        })
+                    }} />}
 
-        }
-    }
+                    <SecondaryButton text="VISIT NOW" buttonWidth={constants.width - 40} onPress={() => {
+                        openGoogleMap(props.navigation.getParam('attraction').name, props.navigation.getParam('attraction').placeId)
+                    }} />
+                </ButtonsWrapper>
+            </Container>
+        </Wrapper>
 
-    render() {
-
-        return (
-            <Wrapper>
-                <BackgroundImage source={{ uri: this.props.navigation.getParam('attraction').img }} />
-                <Container>
-                    <Title>{this.props.navigation.getParam('attraction').name}</Title>
-                    <ReviewCount>{this.props.navigation.getParam('attraction').reviews ? this.props.navigation.getParam('attraction').reviews.length : 0} reviews</ReviewCount>
-                    {this.props.navigation.getParam('attraction').reviews ? <ContentWrapper>
-                        {this.props.navigation.getParam('attraction').reviews.map((review, index) => {
-                            return (<Review author={review.author_name} authorProfilePic={review.profile_photo_url} rating={review.rating} text={review.text} key={index} />)
-                        })}
-                    </ContentWrapper> :
-                        <NoReview>
-                            <Text>No reviews yet.</Text>
-                        </NoReview>
-                    }
-                    <ButtonsWrapper style={{ height: this.props.navigation.getParam('isSuggestion') ? 145 : 90 }}>
-                        {this.props.navigation.getParam('isSuggestion') && <PrimaryButton text="ADD TO ITINERARY" buttonWidth={constants.width - 40} onPress={() => {
-                            let index = this.props.navigation.getParam('index')
-                            this.props.navigation.navigate('Select Itinerary', {
-                                index: index
-                            })
-                        }} />}
-
-                        <SecondaryButton text="VISIT NOW" buttonWidth={constants.width - 40} onPress={() => {
-                            context.openGoogleMap(this.props.navigation.getParam('attraction').name, this.props.navigation.getParam('attraction').placeId)
-                        }} />
-                    </ButtonsWrapper>
-                </Container>
-            </Wrapper>
-
-        )
-    }
+    )
 }

@@ -25,7 +25,6 @@ export default function AttractionsItem(props) {
         };
 
         setCurrCoordinates(coordinates)
-        console.log(currCoordinates)
     };
 
     const distance = (lat1, lon1, lat2, lon2) => {
@@ -79,7 +78,7 @@ export default function AttractionsItem(props) {
                                     fontWeight: "normal"
                                 }}
                             >
-                                {Math.round(distance(currCoordinates.latitude, currCoordinates.longitude, props.attraction.coordinates.lat, props.attraction.coordinates.lng) * 100) / 100}m
+                                {Math.round(distance(currCoordinates.latitude, currCoordinates.longitude, props.attraction.coordinates.lat, props.attraction.coordinates.lng) * 100) / 1000}km
                 </Text>}
 
                         </View>
