@@ -103,13 +103,23 @@ export default (props) => {
                     </KeyboardAvoidingView>
                 </SearchBarWrapper>
 
+                <View style={{ bottom: 30, position: 'absolute' }}>
+                    <PrimaryButton
+                        text="Find Route"
+                        onPress={async () => {
+                            await optimizeRoute(props.navigation.state.params.index, beginPoint, endPoint)
+                            navigation.goBack(null)
+                        }}
+                    />
+                </View>
+
             </KeyboardAvoidingView>
         </Wrapper >
     )
 }
 <PrimaryButton
     text="Find Route"
-                    onPress={async () => {
+    onPress={async () => {
         await optimizeRoute(props.navigation.state.params.index, beginPoint, endPoint)
         navigation.goBack(null)
     }}
