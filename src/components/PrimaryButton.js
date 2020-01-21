@@ -17,7 +17,7 @@ const ButtonText = styled.Text`
     fontSize: 18px;
 `;
 
-export default ({text, buttonWidth = constants.width, onPress}) => {
+export default ({ text, buttonWidth = constants.width, onPress }) => {
 
     return (
         <Wrapper buttonWidth={buttonWidth} onPress={onPress}>
