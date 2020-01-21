@@ -207,23 +207,34 @@ const ContextCreatorProvider = props => {
     }
 
     optimizeRoute = (tripIndex, origin, destination) => {
-        let currTrips = trips
-        let waypoints = ""
-        for (let i = 0; i < currTrips[tripIndex].attractions.length; i++) {
-            waypoints = waypoints + "%7C" + currTrips[tripIndex].attractions[i].coordinates.lat + '%2C' + currTrips[tripIndex].attractions[i].coordinates.lng
-        }
-        let url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + origin.lat + ',' + origin.lng + '&destination=' + destination.lat + ',' + destination.lng + '&waypoints=optimize:true' + waypoints + '&key=' + API_KEY
-        fetch(url)
-            .then(response => response.json())
-            .then(JSONResponse => {
-                let route = JSONResponse.routes[0].waypoint_order
-                let newOrder = []
-                for (let i = 0; i < route.length; i++) {
-                    newOrder = [...newOrder, currTrips[tripIndex].attractions[route[i]]]
-                }
-                currTrips[tripIndex].attractions = newOrder
-                setTrips(currTrips)
-            })
+        return new Promise(resolve => {
+            let currTrips = trips
+            let waypoints = ""
+            for (let i = 0; i < currTrips[tripIndex].attractions.length; i++) {
+                waypoints = waypoints + "%7C" + currTrips[tripIndex].attractions[i].coordinates.lat + '%2C' + currTrips[tripIndex].attractions[i].coordinates.lng
+            }
+            let url = "https://maps.googleapis.com/maps/api/directions/json?origin=" + origin.lat + ',' + origin.lng + '&destination=' + destination.lat + ',' + destination.lng + '&waypoints=optimize:true' + waypoints + '&key=' + API_KEY
+            fetch(url)
+                .then(response => response.json())
+                .then(JSONResponse => {
+                    let route = JSONResponse.routes[0].waypoint_order
+                    let newOrder = []
+                    for (let i = 0; i < route.length; i++) {
+                        newOrder = [...newOrder, currTrips[tripIndex].attractions[route[i]]]
+                    }
+                    currTrips[tripIndex].attractions = newOrder
+                    setTrips(currTrips)
+                    try {
+                        AsyncStorage.setItem(
+                            "@SavedTrips",
+                            JSON.stringify(currTrips));
+                    }
+                    catch (e) { }
+
+                    resolve(currTrips[tripIndex])
+                })
+        })
+
     }
 
     useEffect(async () => {

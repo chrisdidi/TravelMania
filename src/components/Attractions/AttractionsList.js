@@ -1,36 +1,46 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import { StyleSheet, FlatList, Text, View } from "react-native";
 import AttractionsItem from "./AttractionsItem";
 import { ContextCreator } from "../../context/ContextCreator";
+import SecondaryButton from '../SecondaryButton';
+import constants from '../../constants'
 
 export default function AttractionsList(props) {
-    console.log("ISKVIECIA")
     const { trips } = useContext(ContextCreator)
-    console.log(trips.length)
 
-    console.log(props.trip.name)
     let tripToWork = trips.filter((trip => trip.name === props.trip.name))
-    console.log(tripToWork[0])
     let data = tripToWork[0].attractions.map((elem, index) => ({ id: index, attraction: elem }))
+    const [dataHook, setDataHook] = useState(data)
 
-    useEffect(() => {
-        tripToWork = trips.filter((trip => trip.name === props.trip.name))
-        console.log(tripToWork[0])
-        data = tripToWork[0].attractions.map((elem, index) => ({ id: index, attraction: elem }))
-    })
+    const updateData = (updatedData) => {
+        data = updatedData.attractions.map((elem, index) => ({ id: index, attraction: elem }))
+        setDataHook(data)
+    }
 
     return (
-        <FlatList
-            contentContainerStyle={{
-                alignItems: "center",
-                justifyContent: "center",
-            }}
-            style={styles.scrollView}
-            data={data}
+        <>
+            <FlatList
+                contentContainerStyle={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+                style={styles.scrollView}
+                data={dataHook}
 
-            renderItem={({ item }) => <AttractionsItem attraction={item.attraction} trip={props.trip} />}
-            keyExtractor={item => item.id + item.attraction.name + item.attraction.img}
-        />
+                renderItem={({ item }) => <AttractionsItem attraction={item.attraction} trip={props.trip} />}
+                keyExtractor={item => item.id + item.attraction.name + item.attraction.img}
+            />
+
+            <View style={{ bottom: 30, position: 'absolute' }}>
+                <SecondaryButton text="Find best route!" buttonWidth={constants.width} style={{ marginBottom: 10, marginLeft: 50 }} onPress={() => {
+                    props.navigation.navigate('OptimisationScreen', {
+                        index: props.navigation.state.params.index,
+                        eventToHandle: updateData
+                    }
+                    )
+                }} />
+            </View>
+        </>
     );
 }
 

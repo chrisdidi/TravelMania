@@ -118,12 +118,15 @@ export default (props) => {
                     <PrimaryButton
                         text="Find Route"
                         onPress={async () => {
+                            let updatedTrip = []
                             if (roundTrip) {
-                                await optimizeRoute(props.navigation.state.params.index, beginPoint, beginPoint)
+                                updatedTrip = await optimizeRoute(props.navigation.state.params.index, beginPoint, beginPoint)
                             }
                             else {
-                                await optimizeRoute(props.navigation.state.params.index, beginPoint, endPoint)
+                                updatedTrip = await optimizeRoute(props.navigation.state.params.index, beginPoint, endPoint)
                             }
+                            props.navigation.state.params.eventToHandle(updatedTrip)
+
                             navigation.goBack(null)
                         }}
                     />
