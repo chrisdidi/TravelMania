@@ -1,6 +1,6 @@
 import React, { Component, useContext } from 'react';
 import { View, Image, Text, ScrollView, Linking } from 'react-native';
-import ContextCreator from '../context/ContextCreator'
+import { ContextCreator } from '../context/ContextCreator'
 import constants from '../constants'
 import styled from 'styled-components';
 import Review from '../components/AttractionDetail/Review';

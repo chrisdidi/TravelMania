@@ -1,23 +1,16 @@
-import React, { Component, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { Text, View, Alert, Platform } from "react-native";
 import * as Permissions from 'expo-permissions'
 import * as Location from 'expo-location'
 import { AppLoading } from 'expo';
 import { ThemeProvider } from "styled-components";
 import StackNavigation from "./src/navigations/StackNavigations";
-import Store from './src/context/Store.js';
-import ContextCreator from './src/context/ContextCreator'
+import ContextCreatorProvider from './src/context/ContextCreator'
 import styles from "./src/styles/Theme";
-import ItineraryContextProvier from "./src/context/ItineraryContext"
 
-export default class App extends Component {
+export default function App() {
 
-  constructor(props) {
-    super(props)
-    this.state = {
-      locationLoaded: false
-    }
-  }
+  const [locationLoaded, setLocationLoaded] = useState(false)
 
   findCurrentLocationAsync = () => {
     return new Promise(async resolve => {
@@ -28,7 +21,7 @@ export default class App extends Component {
             Alert.alert('Permission to use location required!', 'Please grant permission to use location service in your settings and try again.', [
               {
                 text: 'Grant Permission', onPress: async () => {
-                  let permission = await this.checkPermissions()
+                  let permission = await checkPermissions()
                   if (permission === false) {
                     resolve(false)
                   }
@@ -38,23 +31,17 @@ export default class App extends Component {
             Alert.alert('Permission to use location required!', 'Please grant location service permission in order to continue using the app.', [
               {
                 text: 'Grant Permission', onPress: () => {
-                  this.setState({
-                    locationLoaded: false
-                  })
+                  setLocationLoaded(false)
                   resolve(false)
                 }
               }
             ])
-          this.setState({
-            locationLoaded: false
-          })
+          setLocationLoaded(false)
         }
         let location = await Location.getCurrentPositionAsync({})
         location.coords.lat = location.coords.latitude
         location.coords.lon = location.coords.longitude
-        this.setState({
-          locationLoaded: true
-        })
+        setLocationLoaded(true)
         resolve(true)
       } catch (error) {
         console.log(error)
@@ -65,41 +52,29 @@ export default class App extends Component {
   checkPermissions = async () => {
     return new Promise(async resolve => {
       let { status } = await Permissions.getAsync(Permissions.LOCATION);
-      if (status !== 'granted') {
-        this.setState({
-          locationLoaded: false
-        })
-        resolve(false)
-      } else {
-
-        this.setState({
-          locationLoaded: true
-        })
-        resolve(true)
-      }
+      setLocationLoaded(status !== 'granted')
+      resolve(status !== 'granted')
     })
   }
 
-  componentDidMount = async () => {
-    let locationPermission = await this.checkPermissions()
+
+  useEffect(async () => {
+    let locationPermission = await checkPermissions()
     if (locationPermission === false) {
       do {
-        await this.findCurrentLocationAsync()
-      } while (this.state.locationLoaded === false)
+        await findCurrentLocationAsync()
+      } while (locationLoaded === false)
     } else {
 
     }
-  }
+  }, [])
 
-  render() {
-    return (<Store theApp={this.state.locationLoaded ? <ThemeProvider theme={styles}>
-      <View style={{ flex: 1, backgroundColor: styles.lightGreyColor }}>
-        <StackNavigation />
-      </View>
-    </ThemeProvider> : <AppLoading />}>
-    </Store>
-    )
-  }
+  return (<ContextCreatorProvider theApp={locationLoaded ? <ThemeProvider theme={styles}>
+    <View style={{ flex: 1, backgroundColor: styles.lightGreyColor }}>
+      <StackNavigation />
+    </View>
+  </ThemeProvider> : <AppLoading />}>
+  </ContextCreatorProvider>
+  )
 }
 
-App.contextType = ContextCreator;

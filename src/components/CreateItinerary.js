@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, createContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'
 import styled from 'styled-components';
 import constants from '../constants'
-import ContextCreator from '../context/ContextCreator'
+import { ContextCreator } from '../context/ContextCreator'
 import PrimaryButton from './PrimaryButton'
 
 const Wrapper = styled.TouchableOpacity`
@@ -24,7 +24,7 @@ const FormModal = styled.View`
     height: 360px;
     backgroundColor: ${props => props.theme.darkBlueColor};
     borderRadius: 12px;
-    top: ${(constants.height  * 0.5) - 110 - 180};
+    top: ${(constants.height * 0.5) - 110 - 180};
     left: ${(constants.width * 0.5) - (constants.width * 0.4)};
     elevation: 5;
     box-shadow: 0px 4px 15px rgba(0,0,0, 0.4);
@@ -67,44 +67,44 @@ const CloseButton = styled.TouchableOpacity`
     justifyContent: center;
 `;
 
-export default ({width = constants.width}) => {
+export default ({ width = constants.width }) => {
 
-    const [ showModal, setShowModal ] = useState(false)
-    const [ itineraryName, setItineraryName ] = useState("")
-    const [ description, setDescription ] = useState("")
-    return(
+    const [showModal, setShowModal] = useState(false)
+    const [itineraryName, setItineraryName] = useState("")
+    const [description, setDescription] = useState("")
+
+    const { createNewItinerary } = useContext(ContextCreator)
+    return (
         <>
-        <Wrapper wrapperWidth={width} onPress={() => {
-            setShowModal(!showModal)
-        }}>
-            <ButtonText>{showModal ? "Cancel" : "Create new itinerary"}</ButtonText>
-        </Wrapper>
-        <FormModal pointerEvents={showModal ? 'auto' : 'none'} displayModal={showModal ? {display: 'flex', opacity: 1, pointerEvents: 'auto'} : { display: 'none', opacity: 0, pointerEvents: 'none'} }>
-            <CloseButton onPress={() => {
+            <Wrapper wrapperWidth={width} onPress={() => {
                 setShowModal(!showModal)
             }}>
-                <Ionicons name="ios-close" size={40} color="#F1F3F6"/>
-            </CloseButton>
-            <View>
-                <ModalTitle>New itinerary</ModalTitle>
-                <Question>Give your trip a name.</Question>
-                <InputWrapper><TextInput value={itineraryName} onChangeText={e => {
-                    setItineraryName(e)
-                }} placeholder="e.g. Day 1 in London"/></InputWrapper>
-                <Question>What is it about?</Question>
-                <InputWrapper><TextInput value={description} onChangeText={e => {
-                    setDescription(e)
-                }} placeHolder="(Optional)"/></InputWrapper>
-            </View>
-            <ContextCreator.Consumer>
-                {context => (
-                    <PrimaryButton buttonWidth='auto' text="CREATE ITINERARY" onPress={() => {
-                        context.createNewItinerary(itineraryName, description)
-                        setShowModal(false)
-                    }}/>
-                )}
-            </ContextCreator.Consumer>
-        </FormModal>
+                <ButtonText>{showModal ? "Cancel" : "Create new itinerary"}</ButtonText>
+            </Wrapper>
+            <FormModal pointerEvents={showModal ? 'auto' : 'none'} displayModal={showModal ? { display: 'flex', opacity: 1, pointerEvents: 'auto' } : { display: 'none', opacity: 0, pointerEvents: 'none' }}>
+                <CloseButton onPress={() => {
+                    setShowModal(false)
+                }}>
+                    <Ionicons name="ios-close" size={40} color="#F1F3F6" />
+                </CloseButton>
+                <View>
+                    <ModalTitle>New itinerary</ModalTitle>
+                    <Question>Give your trip a name.</Question>
+                    <InputWrapper><TextInput value={itineraryName} onChangeText={e => {
+                        setItineraryName(e)
+                    }} placeholder="e.g. Day 1 in London" /></InputWrapper>
+                    <Question>What is it about?</Question>
+                    <InputWrapper><TextInput value={description} onChangeText={e => {
+                        setDescription(e)
+                    }} placeHolder="(Optional)" /></InputWrapper>
+                </View>
+
+                <PrimaryButton buttonWidth='auto' text="CREATE ITINERARY" onPress={() => {
+                    createNewItinerary(itineraryName, description)
+                    setShowModal(false)
+                }} />
+
+            </FormModal>
         </>
     )
 }

@@ -1,10 +1,9 @@
-import React, { Component } from 'react';
-import { View, Text, TextInput, SafeAreaView, ActivityIndicator } from 'react-native';
+import React, { Component, useState, useEffect, useContext } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import Constants from 'expo-constants';
 import styled from 'styled-components';
 import constants from '../constants';
-import ContextCreator from '../context/ContextCreator';
+import { ContextCreator } from '../context/ContextCreator';
 import styles from '../styles/Theme';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MapView, { Marker, Callout } from 'react-native-maps';
@@ -41,82 +40,67 @@ const Button = styled.View`
 `;
 
 
-export default class ExploreScreen extends Component {
+export default function ExploreScreen(props) {
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            showList: 'auto'
-        }
-    }
+    const [showList, setShowList] = useState('auto')
+    const { getCurrentLocation, saveNavigation, currentLocation, currentSuggestions,
+        getLatLngFromGoogle, updateCurrentLocation, searchNearbyAttractions } = useContext(ContextCreator)
 
-    componentDidMount = () => {
-        this.context.getCurrentLocation()
-        this.context.saveNavigation(this.props.navigation)
-    }
+    useEffect(() => {
+        getCurrentLocation()
+        saveNavigation(props.navigation)
+    }, [])
 
-    render() {
-        return (
-            <Wrapper>
-                <ContextCreator.Consumer>
-                    {context => {
-                        return (
-                            <>
-                                <MapView
-                                    style={{ width: constants.width, height: constants.height, zIndex: 0 }}
-                                    initialRegion={{
-                                        latitude: context.currentLocation.lat,
-                                        longitude: context.currentLocation.lng,
-                                        latitudeDelta: 0.05,
-                                        longitudeDelta: 0.05,
-                                    }}
-                                    region={{
-                                        latitude: context.currentLocation.lat,
-                                        longitude: context.currentLocation.lng,
-                                        latitudeDelta: 0.05,
-                                        longitudeDelta: 0.05,
-                                    }}
-                                >
-                                    <Marker
-                                        coordinate={{
-                                            latitude: context.currentLocation.lat,
-                                            longitude: context.currentLocation.lng,
-                                            latitudeDelta: 0.005,
-                                            longitudeDelta: 0.005,
-                                        }}
-                                    ><MaterialCommunityIcons name='human-male' size={45} color={styles.darkBlueColor} /></Marker>
-                                    {context.currentSuggestions.map((attraction, index) => {
-                                        return (<Marker
-                                            coordinate={{
-                                                latitude: attraction.coordinates.lat,
-                                                longitude: attraction.coordinates.lng,
-                                            }}
-                                            title={attraction.name}
-                                            key={index}
-                                        >
-                                            <MaterialCommunityIcons name='map-marker' size={32} color={styles.darkBlueColor} />
-                                            <Callout>
-                                                <AttractionCard name={attraction.name} placeId={attraction.placeId} img={attraction.img} key={index} />
-                                            </Callout>
-                                        </Marker>
-                                        )
-                                    })}
-                                </MapView>
-                                <SearchBarWrapper>
-                                    <GoogleTextInput onPressEvent={async (data) => {
-                                        let latLng = await context.getLatLngFromGoogle(data.place_id)
-                                        context.updateCurrentLocation(latLng)
-                                        await context.searchNearbyAttractions(latLng)
-                                    }} />
-                                </SearchBarWrapper>
-                            </>
-                        )
+    return (
+        <Wrapper>
+            <MapView
+                style={{ width: constants.width, height: constants.height, zIndex: 0 }}
+                initialRegion={{
+                    latitude: currentLocation.lat,
+                    longitude: currentLocation.lng,
+                    latitudeDelta: 0.05,
+                    longitudeDelta: 0.05,
+                }}
+                region={{
+                    latitude: currentLocation.lat,
+                    longitude: currentLocation.lng,
+                    latitudeDelta: 0.05,
+                    longitudeDelta: 0.05,
+                }}
+            >
+                <Marker
+                    coordinate={{
+                        latitude: currentLocation.lat,
+                        longitude: currentLocation.lng,
+                        latitudeDelta: 0.005,
+                        longitudeDelta: 0.005,
                     }}
-                </ContextCreator.Consumer>
-                <Drawer navigation={this.props.navigation} />
-            </Wrapper>
-        )
-    }
+                ><MaterialCommunityIcons name='human-male' size={45} color={styles.darkBlueColor} /></Marker>
+                {currentSuggestions.map((attraction, index) => {
+                    return (<Marker
+                        coordinate={{
+                            latitude: attraction.coordinates.lat,
+                            longitude: attraction.coordinates.lng,
+                        }}
+                        title={attraction.name}
+                        key={index}
+                    >
+                        <MaterialCommunityIcons name='map-marker' size={32} color={styles.darkBlueColor} />
+                        <Callout>
+                            <AttractionCard name={attraction.name} placeId={attraction.placeId} img={attraction.img} key={index} />
+                        </Callout>
+                    </Marker>
+                    )
+                })}
+            </MapView>
+            <SearchBarWrapper>
+                <GoogleTextInput onPressEvent={async (data) => {
+                    let latLng = await getLatLngFromGoogle(data.place_id)
+                    updateCurrentLocation(latLng)
+                    await searchNearbyAttractions(latLng)
+                }} />
+            </SearchBarWrapper>
+            <Drawer navigation={props.navigation} />
+        </Wrapper>
+    )
 }
-
-ExploreScreen.contextType = ContextCreator;

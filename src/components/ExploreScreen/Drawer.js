@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StatusBar, Animated, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import styled from 'styled-components';
 import constants from '../../constants';
-import theme from '../../styles/Theme';
 import Drawer from 'react-native-advance-draggable-view';
-import ContextCreator from '../../context/ContextCreator';
+import { ContextCreator } from '../../context/ContextCreator';
 import Attractions from './Attractions';
 
 const Wrapper = styled.View`
@@ -62,7 +61,10 @@ const TripButton = styled.TouchableOpacity`
     backgroundColor: ${props => props.theme.pinkColor};
 `;
 
-export default ({ navigation }) => {
+export default function ExportedDrawer({ navigation }) {
+
+    const { searchLoading } = useContext(ContextCreator)
+
     return (
         <Wrapper pointerEvents='box-none'>
             <Drawer
@@ -89,7 +91,6 @@ export default ({ navigation }) => {
                 renderInitDrawerView={() => (<View>
 
                     <TripButton pointerEvents='auto' onPress={() => {
-                        //context.optimizeRoute(0)
                         navigation.navigate("ItineraryList")
                     }}>
                         <MaterialCommunityIcons name='book-multiple-variant' size={32} color={'#fff'} />

@@ -1,9 +1,9 @@
-import React, {useState} from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import styled from 'styled-components'
 import Constants from 'expo-constants'
 import constants from '../constants';
-import ContextCreator from '../context/ContextCreator';
+import { ContextCreator } from '../context/ContextCreator';
 import Itinerary from '../components/AddToItinerary/Itinerary';
 import BigButton from '../components/BigButton';
 import CreateItinerary from '../components/CreateItinerary';
@@ -27,39 +27,35 @@ const Title = styled.Text`
     fontSize: 18;
 `;
 
-export default ({navigation}) => {
+export default function AddToItinerary({ navigation }) {
 
     const attractionIndex = navigation.getParam('index')
-    const [ added, setAdded ] = useState(false)
+    const [added, setAdded] = useState(false)
+    const { currentSuggestions, trips } = useContext(ContextCreator)
 
-    function goBack(){
+    function goBack() {
         navigation.goBack()
     }
 
-    function changeCta(){
+    function changeCta() {
         setAdded(true)
     }
 
     return (
-        <ContextCreator.Consumer>
-            {context => {
-                return(
-                <Wrapper>
-                    <Title>Add {context.currentSuggestions[attractionIndex].name} to...</Title>
-                    <CreateItinerary width={constants.width - 40}/>
-                    <ScrollView style={{borderTopWidth: 1, borderColor: '#F1F3F6'}}>
-                    {context.trips.length === 0 ? <Text style={{alignSelf: 'center', marginTop: 20}}>No itinerary yet.</Text> : context.trips.map((itinerary, index) => {
-                        return <Itinerary index={index} attractionIndex={attractionIndex} changeCta={changeCta} navigation={navigation} attractionCount={itinerary.attractions === undefined ? 0 : itinerary.attractions.length} tripName={itinerary.name} key={index}/>
-                    })}                    
-                    </ScrollView>
-                    <BigButton text={added ?  'DONE' : 'CANCEL'} success={added}onPress={added ? () => {
-                            navigation.goBack('MAIN_ROUTE_EXPLORE')
-                    } : () => {
-                        navigation.goBack()
-                    }}/>
-                </Wrapper>
-                )
-            }}
-        </ContextCreator.Consumer>
+        <Wrapper>
+            <Title>Add {currentSuggestions[attractionIndex].name} to...</Title>
+            <CreateItinerary width={constants.width - 40} />
+            <ScrollView style={{ borderTopWidth: 1, borderColor: '#F1F3F6' }}>
+                {trips.length === 0 ? <Text style={{ alignSelf: 'center', marginTop: 20 }}>No itinerary yet.</Text> : trips.map((itinerary, index) => {
+                    return <Itinerary index={index} attractionIndex={attractionIndex} changeCta={changeCta} navigation={navigation} attractionCount={itinerary.attractions === undefined ? 0 : itinerary.attractions.length} tripName={itinerary.name} key={index} />
+
+                })}
+            </ScrollView>
+            <BigButton text={added ? 'DONE' : 'CANCEL'} success={added} onPress={added ? () => {
+                navigation.goBack('MAIN_ROUTE_EXPLORE')
+            } : () => {
+                navigation.goBack()
+            }} />
+        </Wrapper>
     )
 }

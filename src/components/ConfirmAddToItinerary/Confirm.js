@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import styled from 'styled-components';
 import constants from '../../constants'
-import ContextCreator from '../../context/ContextCreator'
+import { ContextCreator } from '../../context/ContextCreator'
 
 const Wrapper = styled.TouchableOpacity`
     width: ${constants.width - 40};
@@ -17,19 +17,14 @@ const ButtonText = styled.Text`
 `;
 
 export default ({ attractionIndex, tripIndex, exist, setAdded }) => {
-
+    const { currentSuggestions, removeAttractionFromItinerary, addToItinerary } = useContext(ContextCreator)
     return (
-        <ContextCreator.Consumer>
-            {context => {
-                return (
-                    <Wrapper onPress={() => {
-                        exist ? context.removeAttractionFromItinerary(context.currentSuggestions[attractionIndex].placeId, tripIndex) : context.addToItinerary(attractionIndex, tripIndex)
-                        setAdded()
-                    }}>
-                    <ButtonText>{exist ? "Remove from itinerary" : "Add to itinerary"}</ButtonText>
-                    </Wrapper>
-                )
-            }}
-        </ContextCreator.Consumer>
+        <Wrapper onPress={() => {
+            exist ? removeAttractionFromItinerary(currentSuggestions[attractionIndex].placeId, tripIndex) : addToItinerary(attractionIndex, tripIndex)
+            setAdded()
+        }}>
+            <ButtonText>{exist ? "Remove from itinerary" : "Add to itinerary"}</ButtonText>
+        </Wrapper>
+
     )
 }

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { View, Text, KeyboardAvoidingView } from 'react-native'
 import PrimaryButton from '../components/PrimaryButton'
 import { CheckBox } from 'react-native-elements'
-import ContextCreator from '../context/ContextCreator'
+import { ContextCreator } from '../context/ContextCreator'
 import GoogleTextInput from '../components/GoogleTextInput'
 import constants from '../constants'
 
@@ -116,21 +116,19 @@ export default (props) => {
 
                 <View style={{ marginTop: 10 }}>
                     <PrimaryButton
-                        disabled
                         text="Find Route"
                         onPress={async () => {
                             if (roundTrip) {
-                                setEndPoint(beginPoint)
+                                await optimizeRoute(props.navigation.state.params.index, beginPoint, beginPoint)
                             }
-                            await optimizeRoute(props.navigation.state.params.index, beginPoint, endPoint)
+                            else {
+                                await optimizeRoute(props.navigation.state.params.index, beginPoint, endPoint)
+                            }
                             navigation.goBack(null)
                         }}
                     />
                 </View>
             </SearchBarWrapper>
-
-
-
         </KeyboardAvoidingView>
     )
 }

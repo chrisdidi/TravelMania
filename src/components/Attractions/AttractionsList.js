@@ -1,33 +1,36 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { StyleSheet, FlatList, Text, View } from "react-native";
 import AttractionsItem from "./AttractionsItem";
-import ContextCreator from "../../context/ContextCreator";
+import { ContextCreator } from "../../context/ContextCreator";
 
 export default function AttractionsList(props) {
-    const data = props.attractions.map((elem, index) => ({ id: index, attraction: elem }))
+    console.log("ISKVIECIA")
+    const { trips } = useContext(ContextCreator)
+    console.log(trips.length)
+
+    console.log(props.trip.name)
+    let tripToWork = trips.filter((trip => trip.name === props.trip.name))
+    console.log(tripToWork[0])
+    let data = tripToWork[0].attractions.map((elem, index) => ({ id: index, attraction: elem }))
+
+    useEffect(() => {
+        tripToWork = trips.filter((trip => trip.name === props.trip.name))
+        console.log(tripToWork[0])
+        data = tripToWork[0].attractions.map((elem, index) => ({ id: index, attraction: elem }))
+    })
 
     return (
-        <ContextCreator.Consumer>
-            {context => {
-                const tripToWork = context.trips.filter((trip => trip === props.trip))
-                const data = tripToWork[0].attractions.map((elem, index) => ({ id: index, attraction: elem }))
-
-                return (
-                    <FlatList
-                        contentContainerStyle={{
-                            alignItems: "center",
-                            justifyContent: "center",
-                        }}
-                        style={styles.scrollView}
-                        data={data}
-
-                        renderItem={({ item }) => <AttractionsItem attraction={item.attraction} trip={props.trip} />}
-                        keyExtractor={item => item.id + item.attraction.name + item.attraction.img}
-                    />
-                )
+        <FlatList
+            contentContainerStyle={{
+                alignItems: "center",
+                justifyContent: "center",
             }}
-        </ContextCreator.Consumer>
+            style={styles.scrollView}
+            data={data}
 
+            renderItem={({ item }) => <AttractionsItem attraction={item.attraction} trip={props.trip} />}
+            keyExtractor={item => item.id + item.attraction.name + item.attraction.img}
+        />
     );
 }
 
