@@ -1,20 +1,39 @@
-import React, { useContext, useState } from "react";
+import React, { useContext,useEffect , useState } from "react";
 import { StyleSheet, FlatList, Text, View } from "react-native";
 import AttractionsItem from "./AttractionsItem";
-import { ContextCreator } from "../../context/ContextCreator";
+import {ContextCreator} from "../../context/ContextCreator";
 import SecondaryButton from '../SecondaryButton';
+import * as Permissions from "expo-permissions";
+import * as Location from "expo-location";
 import constants from '../../constants'
 
 export default function AttractionsList(props) {
     const { trips } = useContext(ContextCreator)
-
-    let tripToWork = trips.filter((trip => trip.name === props.trip.name))
-    let data = tripToWork[0].attractions.map((elem, index) => ({ id: index, attraction: elem }))
+    let data = trips[props.tripIndex].attractions.map((elem, index) => ({ id: index, attraction: elem }))
     const [dataHook, setDataHook] = useState(data)
+    const [currCoordinates, setCurrCoordinates] = useState("")
+    const [optimize, setOptimize] = useState(false)
 
-    const updateData = (updatedData) => {
-        data = updatedData.attractions.map((elem, index) => ({ id: index, attraction: elem }))
-        setDataHook(data)
+    useEffect(() => {
+        getCoordinates()
+    }, [])
+
+    const getCoordinates = async () => {
+        let { status } = await Permissions.askAsync(Permissions.LOCATION);
+        if (status !== "granted") {
+            console.log("Permission not granted");
+        }
+
+        let location = await Location.getCurrentPositionAsync({});
+        let coordinates = {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude
+        };
+        setCurrCoordinates(coordinates)
+    };
+
+    const updateRoute = () => {
+        setOptimize(!optimize)
     }
 
     return (
@@ -25,17 +44,15 @@ export default function AttractionsList(props) {
                     justifyContent: "center",
                 }}
                 style={styles.scrollView}
-                data={dataHook}
-
-                renderItem={({ item }) => <AttractionsItem attraction={item.attraction} trip={props.trip} />}
-                keyExtractor={item => item.id + item.attraction.name + item.attraction.img}
+                data={data}
+                renderItem={({ item, index }) => <AttractionsItem currCoordinates={currCoordinates} attraction={item} attractionIndex={index} tripIndex={props.tripIndex} />}
+                keyExtractor={item => item.id}
             />
-
-            <View style={{ bottom: 30, position: 'absolute' }}>
-                <SecondaryButton text="Find best route!" buttonWidth={constants.width} style={{ marginBottom: 10, marginLeft: 50 }} onPress={() => {
+            <View style={{ bottom: 30, position: 'absolute', alignItems: "center", width: constants.width }}>
+                <SecondaryButton text="Find best route!" buttonWidth={constants.width - 40} style={{ marginBottom: 10, marginLeft: 50 }} onPress={() => {
                     props.navigation.navigate('OptimisationScreen', {
                         index: props.navigation.state.params.index,
-                        eventToHandle: updateData
+                        updateRoute: updateRoute
                     }
                     )
                 }} />

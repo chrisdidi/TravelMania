@@ -17,13 +17,13 @@ const ButtonText = styled.Text`
 `;
 
 export default ({ attractionIndex, tripIndex, exist, setAdded }) => {
-    const { currentSuggestions, removeAttractionFromItinerary, addToItinerary } = useContext(ContextCreator)
+    const { trips,checkAttractionExistence , currentSuggestions, removeAttractionFromItinerary, addToItinerary } = useContext(ContextCreator)
     return (
         <Wrapper onPress={() => {
-            exist ? removeAttractionFromItinerary(currentSuggestions[attractionIndex].placeId, tripIndex) : addToItinerary(attractionIndex, tripIndex)
-            setAdded()
+            checkAttractionExistence(attractionIndex, tripIndex) ? removeAttractionFromItinerary(currentSuggestions[attractionIndex].placeId, tripIndex) : addToItinerary(attractionIndex, tripIndex)
+            setAdded(trips)
         }}>
-            <ButtonText>{exist ? "Remove from itinerary" : "Add to itinerary"}</ButtonText>
+            <ButtonText>{checkAttractionExistence(attractionIndex, tripIndex) ? "Remove from itinerary" : "Add to itinerary"}</ButtonText>
         </Wrapper>
 
     )

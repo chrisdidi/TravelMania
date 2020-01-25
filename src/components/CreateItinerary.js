@@ -67,11 +67,20 @@ const CloseButton = styled.TouchableOpacity`
     justifyContent: center;
 `;
 
+const ErrorMsg = styled.Text`
+    color: ${props => props.theme.pinkColor};
+    marginBottom: 8;
+    opacity: ${props => props.visibility};
+`;
+
+const Input = styled.TextInput``
+
 export default ({ width = constants.width }) => {
 
     const [showModal, setShowModal] = useState(false)
     const [itineraryName, setItineraryName] = useState("")
     const [description, setDescription] = useState("")
+    const [emptyName, setEmptyName] = useState(false)
 
     const { createNewItinerary } = useContext(ContextCreator)
     return (
@@ -93,13 +102,20 @@ export default ({ width = constants.width }) => {
                     <InputWrapper><TextInput value={itineraryName} onChangeText={e => {
                         setItineraryName(e)
                     }} placeholder="e.g. Day 1 in London" /></InputWrapper>
+                    <ErrorMsg visibility={emptyName ? 100 : 0}>A trip name is required!</ErrorMsg>
                     <Question>What is it about?</Question>
-                    <InputWrapper><TextInput value={description} onChangeText={e => {
+                    <InputWrapper><Input placeHolder="(Optional)" value={description} onChangeText={e => {
                         setDescription(e)
-                    }} placeHolder="(Optional)" /></InputWrapper>
+                    }}  /></InputWrapper>
                 </View>
 
                 <PrimaryButton buttonWidth='auto' text="CREATE ITINERARY" onPress={() => {
+                    if(itineraryName === ""){
+                        setEmptyName(true)
+                        return
+                    }else{
+                        setEmptyName(false)
+                    }
                     createNewItinerary(itineraryName, description)
                     setShowModal(false)
                 }} />

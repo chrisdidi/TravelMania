@@ -3,7 +3,7 @@ import { Linking } from 'react-native'
 import * as Location from 'expo-location'
 import { AsyncStorage } from "react-native";
 
-export const ContextCreator = createContext();
+export const ContextCreator = createContext(null);
 
 const API_KEY = "AIzaSyCgQNpZtDRvveEeDUkVBOrzy-TcV1QWbMU"
 
@@ -19,30 +19,25 @@ const ContextCreatorProvider = props => {
     const [tripToRemoveAttraction, setTripToRemoveAttraction] = useState("")
     const [activePlaceId, setActivePlaceId] = useState()
     const [navigation, setNavigation] = useState()
+    const [exFunction, setExFunction] = useState()
 
     removeTripFromList = async () => {
         let filteredArray = []
         let currTrips = trips
-
+        
         if (tripToRemove !== "") {
-            filteredArray = currTrips.filter((trip => trip !== tripToRemove))
+            currTrips.splice(tripToRemove, 1)
+            filteredArray = currTrips
         }
         else {
-            let filteredAttractions = tripToRemoveAttraction.attractions.filter((attraction => attraction !== attractionToRemove))
-
-            for (let i in trips) {
-                if (currTrips[i].name === tripToRemoveAttraction.name) {
-                    currTrips[i].attractions = filteredAttractions
-                }
-            }
-
+            currTrips[tripToRemoveAttraction].attractions.splice(attractionToRemove, 1)
             filteredArray = currTrips
         }
 
         setTrips(filteredArray)
-        setTripToRemove("")
-        setAttractionToRemove("")
-        setTripToRemoveAttraction("")
+        // setTripToRemove("")
+        // setAttractionToRemove("")
+        // setTripToRemoveAttraction("")
         setShowModal(false)
 
         try {
@@ -57,11 +52,11 @@ const ContextCreatorProvider = props => {
         setShowModal(state)
     }
 
-    openModalToRemoveTrip = (trip, attraction, tripToRemoveAttraction) => {
+    openModalToRemoveTrip = (tripIndexToRemove , tripIndexOfAttractionToRemove, attractionIndexToRemove) => {
         setShowModal(true)
-        setTripToRemove(trip)
-        setAttractionToRemove(attraction)
-        setTripToRemoveAttraction(tripToRemoveAttraction)
+        setTripToRemove(tripIndexToRemove)
+        setTripToRemoveAttraction(tripIndexOfAttractionToRemove)
+        setAttractionToRemove(attractionIndexToRemove)
     }
 
     updateCurrentLocation = coordinates => {
@@ -169,7 +164,7 @@ const ContextCreatorProvider = props => {
         return existence
     }
 
-    removeAttractionFromItinerary = (placeId, tripIndex) => {
+    removeAttractionFromItinerary = async (placeId, tripIndex) => {
         let currTrips = trips
         let attractionPlaceId = placeId
         let newIndex = 0;
@@ -181,6 +176,12 @@ const ContextCreatorProvider = props => {
         }
         currTrips[tripIndex].attractions.splice(newIndex, 1)
         setTrips(currTrips)
+        try {
+            await AsyncStorage.setItem(
+                "@SavedTrips",
+                JSON.stringify(currTrips));
+        }
+        catch (e) { }
     }
 
     createNewItinerary = async (name, description) => {
@@ -207,7 +208,7 @@ const ContextCreatorProvider = props => {
     }
 
     optimizeRoute = (tripIndex, origin, destination) => {
-        return new Promise(resolve => {
+        return new Promise((resolve,reject)=> {
             let currTrips = trips
             let waypoints = ""
             for (let i = 0; i < currTrips[tripIndex].attractions.length; i++) {
@@ -217,6 +218,9 @@ const ContextCreatorProvider = props => {
             fetch(url)
                 .then(response => response.json())
                 .then(JSONResponse => {
+                    if(JSONResponse.routes.length === 0){
+                        resolve(false)
+                    }else{
                     let route = JSONResponse.routes[0].waypoint_order
                     let newOrder = []
                     for (let i = 0; i < route.length; i++) {
@@ -224,14 +228,15 @@ const ContextCreatorProvider = props => {
                     }
                     currTrips[tripIndex].attractions = newOrder
                     setTrips(currTrips)
+
                     try {
                         AsyncStorage.setItem(
                             "@SavedTrips",
                             JSON.stringify(currTrips));
                     }
                     catch (e) { }
-
-                    resolve(currTrips[tripIndex])
+                    resolve(currTrips)
+                    }
                 })
         })
 
@@ -275,7 +280,7 @@ const ContextCreatorProvider = props => {
             checkAttractionExistence,
             removeAttractionFromItinerary,
             openGoogleMap,
-            optimizeRoute
+            optimizeRoute,
         }}>
             {props.theApp}
         </ContextCreator.Provider>

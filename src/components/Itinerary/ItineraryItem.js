@@ -1,14 +1,16 @@
 import React, { useContext } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import { ContextCreator } from "../../context/ContextCreator"
+import no_img from '../img/no_image.png'
 
 export default function ItineraryItem(props) {
+
   const { openModalToRemoveTrip } = useContext(ContextCreator);
   return (
     <TouchableOpacity
       onPress={() =>
         props.navigation.navigate("AttractionsList", { index: props.index, attractions: props.itinerary.attractions, trip: props.itinerary })}
-      onLongPress={() => openModalToRemoveTrip(props.itinerary, "", "")}
+      onLongPress={() => openModalToRemoveTrip(props.index, "", "")}
       style={styles.itemView}
     >
       <View style={styles.textColumn}>
@@ -27,19 +29,25 @@ export default function ItineraryItem(props) {
       </View>
 
       <View style={styles.imgColumn}>
-        {props.itinerary.image !== "" && <Image
+        {props.itinerary.attractions.length === 0 ?         <Image
+        style={{
+          width: "100%",
+          height: "100%",
+          borderTopRightRadius: 10,
+          borderBottomRightRadius: 10
+        }}
+        source={no_img}
+      /> :
+      <Image
           style={{
             width: "100%",
             height: "100%",
             borderTopRightRadius: 10,
             borderBottomRightRadius: 10
           }}
-          source={{
-            uri: props.itinerary.image
-          }}
-        />}
-
-        {props.itinerary.image === "" && <Text> Photo still not set sorry</Text>}
+          source={{uri: props.itinerary.attractions[0].img}}
+        /> 
+      }
       </View>
     </TouchableOpacity>
   );
@@ -55,14 +63,12 @@ const styles = StyleSheet.create({
     height: 150,
     marginTop: 20,
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#fff",
     shadowColor: "#000000",
-    shadowOpacity: 0.4,
-    shadowRadius: 2,
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
     shadowOffset: {
-      height: 1,
-      width: -2
+      height: 4,
+      width: 0
     }
   },
   textColumn: {

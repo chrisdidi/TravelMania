@@ -1,33 +1,11 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, {  useContext } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
-import * as Permissions from "expo-permissions";
-import * as Location from "expo-location";
-import { ContextCreator } from "../../context/ContextCreator"
+import {ContextCreator }from "../../context/ContextCreator"
 
 export default function AttractionsItem(props) {
 
-    const [currCoordinates, setCurrCoordinates] = useState();
     const { navigation, openModalToRemoveTrip } = useContext(ContextCreator)
-
-    useEffect(() => {
-        getCoordinates()
-    }, [])
-
-    const getCoordinates = async () => {
-        let { status } = await Permissions.askAsync(Permissions.LOCATION);
-        if (status !== "granted") {
-            console.log("Permission not granted");
-        }
-
-        let location = await Location.getCurrentPositionAsync({});
-        let coordinates = {
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude
-        };
-
-        setCurrCoordinates(coordinates)
-    };
-
+    const attraction = props.attraction.attraction
     const distance = (lat1, lon1, lat2, lon2) => {
         var p = 0.017453292519943295; // Math.PI / 180
         var c = Math.cos;
@@ -43,40 +21,40 @@ export default function AttractionsItem(props) {
         <TouchableOpacity
             onPress={() => navigation.navigate({
                 routeName: 'Details', params: {
-                    attraction: props.attraction,
+                    attraction: attraction,
                     isSuggestion: false
                 }, key: 'MAIN_ROUTE_EXPLORE'
             })}
-            onLongPress={() => openModalToRemoveTrip("", props.attraction, props.trip)}
+            onLongPress={() => {
+                openModalToRemoveTrip("", props.tripIndex, props.attractionIndex)
+            }}
             style={styles.itemView}
         >
             <View style={styles.imgColumn}>
-                {props.attraction.img !== "" && <Image
-                    style={{
-                        width: "90%",
-                        height: "90%",
-                        borderRadius: 10,
-                    }}
-                    source={{
-                        uri: props.attraction.img
-                    }}
-                />}
-
-                {props.attraction.img === "" && <Text> Photo still not set sorry</Text>}
+            <Image
+                style={{
+                    width: "90%",
+                    height: "90%",
+                    borderRadius: 10,
+                }}
+                source={{
+                    uri: attraction.img
+                }}
+            />
             </View>
             <View style={styles.textColumn}>
                 <Text style={{ fontWeight: "bold", fontSize: 18 }}>
-                    {props.attraction.name}
+                    {attraction.name}
                 </Text>
 
-                {currCoordinates !== undefined && <Text
+                {props.currCoordinates !== undefined && <Text
                     style={{
                         marginTop: 25,
                         color: "#878787",
                         fontWeight: "normal"
                     }}
                 >
-                    {Math.round(distance(currCoordinates.latitude, currCoordinates.longitude, props.attraction.coordinates.lat, props.attraction.coordinates.lng) * 100) / 1000}km
+                    {(Math.round(distance(props.currCoordinates.latitude, props.currCoordinates.longitude, attraction.coordinates.lat, attraction.coordinates.lng)) / 1000).toFixed(2)}km
                 </Text>}
 
             </View>
