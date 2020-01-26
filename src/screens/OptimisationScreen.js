@@ -7,19 +7,6 @@ import { ContextCreator } from '../context/ContextCreator'
 import GoogleTextInput from '../components/GoogleTextInput'
 import constants from '../constants'
 
-const Wrapper = styled.View`
-    flex: 1;
-    elevation: 5;
-    backgroundColor: white;
-    width: 100%;
-    height: 100%; 
-    alignItems: center;
-    backgroundColor: #2C3D63;
-    borderTopLeftRadius: 18; 
-    borderTopRightRadius: 18;
-    padding: 15px;
-`;
-
 const SearchBarWrapper = styled.View`
     width: 100%;
     marginTop: 10;
@@ -77,7 +64,7 @@ export default (props) => {
                         }}
                     >Find out the best route to visit all your desired attractions!
                 </Text>
-                <ErrorMessage show={transportError ? 1 : 0}>Either your departure or one of your destination is not reachable by landed transport. Please review your itinerary!</ErrorMessage>
+                    <ErrorMessage show={transportError ? 1 : 0}>Either your departure or one of your destination is not reachable by landed transport. Please review your itinerary!</ErrorMessage>
                     <Text
                         style={{
                             fontSize: 18,
@@ -109,7 +96,7 @@ export default (props) => {
                             fontSize: 18,
                             color: "#FFFFFF",
                             fontWeight: "bold",
-                            marginTop: 30,
+                            marginTop: 15,
                             textAlign: 'left'
                         }}
                     >End of your trip
@@ -132,41 +119,42 @@ export default (props) => {
                             margin={10}
                         />
                         <ErrorMessage show={endError ? 1 : 0}>Please enter a valid address!</ErrorMessage>
-                        </>}
-                        <CheckBox style={{ width: 100, height: 100 }} checked={roundTrip} title={"Same as departure location."} containerStyle={{ backgroundColor: "#2C3D63", borderColor: "#2C3D63" }} textStyle={{
+                    </>}
+                    <CheckBox style={{ width: 100, height: 100 }} checked={roundTrip} title={"Same as departure location."} containerStyle={{ backgroundColor: "#2C3D63", borderColor: "#2C3D63" }} textStyle={{
                         fontSize: 16,
                         color: "#FFFFFF",
                         fontWeight: "normal",
                     }} onPress={() => {
-                        setRoundTrip(!roundTrip) 
-                        setEndPoint(beginPoint)}}>
-                        </CheckBox>
+                        setRoundTrip(!roundTrip)
+                        setEndPoint(beginPoint)
+                    }}>
+                    </CheckBox>
 
 
                 </View>
 
-                <View style={{ marginTop: 80}}>
+                <View style={{ marginTop: 40 }}>
                     <PrimaryButton
                         text="Find Route"
-                        buttonWidth={constants.width-40}
+                        buttonWidth={constants.width - 40}
                         onPress={async () => {
-                            if(beginPoint.lat === undefined){
+                            if (beginPoint.lat === undefined) {
                                 setBeginError(true)
                                 return
-                            }else{
+                            } else {
                                 setBeginError(false)
                             }
-                            if(endPoint.lat === undefined){
+                            if (endPoint.lat === undefined) {
                                 setEndError(true)
                                 return
-                            }else{
+                            } else {
                                 setEndError(false)
                             }
                             let optimizedRoute = await optimizeRoute(props.navigation.state.params.index, beginPoint, endPoint)
-                            if(optimizedRoute === false){
+                            if (optimizedRoute === false) {
                                 setTransportError(true)
                                 return
-                            }else{
+                            } else {
                                 setTransportError(false)
                                 props.navigation.state.params.updateRoute()
                                 navigation.goBack(null)
