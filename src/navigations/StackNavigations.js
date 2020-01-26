@@ -69,7 +69,9 @@ const stackFactory = createStackNavigator({
     {
         initialRouteName: 'Explore',
         mode: 'modal',
-        transparentCard: true
+        navigationOptions: {
+            cardStyle: { backgroundColor: 'transparent' }
+        },
     }
 )
 

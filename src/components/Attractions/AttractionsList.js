@@ -1,7 +1,7 @@
-import React, { useContext,useEffect , useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet, FlatList, Text, View } from "react-native";
 import AttractionsItem from "./AttractionsItem";
-import {ContextCreator} from "../../context/ContextCreator";
+import { ContextCreator } from "../../context/ContextCreator";
 import SecondaryButton from '../SecondaryButton';
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
@@ -10,7 +10,6 @@ import constants from '../../constants'
 export default function AttractionsList(props) {
     const { trips } = useContext(ContextCreator)
     let data = trips[props.tripIndex].attractions.map((elem, index) => ({ id: index, attraction: elem }))
-    const [dataHook, setDataHook] = useState(data)
     const [currCoordinates, setCurrCoordinates] = useState("")
     const [optimize, setOptimize] = useState(false)
 
@@ -46,7 +45,7 @@ export default function AttractionsList(props) {
                 style={styles.scrollView}
                 data={data}
                 renderItem={({ item, index }) => <AttractionsItem currCoordinates={currCoordinates} attraction={item} attractionIndex={index} tripIndex={props.tripIndex} />}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item.id + item.attraction.name}
             />
             <View style={{ bottom: 30, position: 'absolute', alignItems: "center", width: constants.width }}>
                 <SecondaryButton text="Find best route!" buttonWidth={constants.width - 40} style={{ marginBottom: 10, marginLeft: 50 }} onPress={() => {

@@ -1,15 +1,15 @@
-import React, {  useContext } from "react";
+import React, { useContext } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
-import {ContextCreator }from "../../context/ContextCreator"
+import { ContextCreator } from "../../context/ContextCreator"
 
 export default function AttractionsItem(props) {
 
     const { navigation, openModalToRemoveTrip } = useContext(ContextCreator)
     const attraction = props.attraction.attraction
     const distance = (lat1, lon1, lat2, lon2) => {
-        var p = 0.017453292519943295; // Math.PI / 180
-        var c = Math.cos;
-        var a =
+        let p = 0.017453292519943295; // Math.PI / 180
+        let c = Math.cos;
+        let a =
             0.5 -
             c((lat2 - lat1) * p) / 2 +
             (c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p))) / 2;
@@ -31,16 +31,16 @@ export default function AttractionsItem(props) {
             style={styles.itemView}
         >
             <View style={styles.imgColumn}>
-            <Image
-                style={{
-                    width: "90%",
-                    height: "90%",
-                    borderRadius: 10,
-                }}
-                source={{
-                    uri: attraction.img
-                }}
-            />
+                <Image
+                    style={{
+                        width: "90%",
+                        height: "90%",
+                        borderRadius: 10,
+                    }}
+                    source={{
+                        uri: attraction.img
+                    }}
+                />
             </View>
             <View style={styles.textColumn}>
                 <Text style={{ fontWeight: "bold", fontSize: 18 }}>
